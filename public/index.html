@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Сборщик информации</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Поиск и скачивание контента</h1>
+    
+    <input type="text" id="keyword" placeholder="Введите ключевое слово (например, роблокс или питон)">
+    <button onclick="search()">Найти</button>
+    
+    <div id="error-msg" class="error"></div>
+    
+    <ul id="url-list"></ul>
+
+    <div id="download-section" class="hidden">
+        <h3>Загрузка...</h3>
+        <div id="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+        <div id="status-text"></div>
+    </div>
+
+    <div id="content-section" class="hidden">
+        <h3>Загруженный контент:</h3>
+        <button onclick="saveToLocalStorage()">Сохранить в LocalStorage</button>
+        <pre id="content-display"></pre>
+    </div>
+
+    <div id="saved-section">
+        <h3>Сохраненный контент (Офлайн):</h3>
+        <ul id="saved-list"></ul>
+        <button onclick="clearLocalStorage()">Очистить сохранения</button>
+        <pre id="saved-display" class="hidden"></pre>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
