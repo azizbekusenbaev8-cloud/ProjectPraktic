@@ -2,40 +2,100 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Сборщик информации</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Учет коммунальных услуг</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f7f6; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { padding: 10px 20px; cursor: pointer; border: none; background: #e0e0e0; border-radius: 5px; font-weight: bold; }
+        .tab-btn.active { background: #2b52ff; color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button.submit-btn { background: #2b52ff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        
+        .error { color: #d32f2f; background: #ffebee; padding: 10px; border-radius: 5px; margin-top: 10px; display: none; }
+        .success { color: #388e3c; background: #e8f5e9; padding: 10px; border-radius: 5px; margin-top: 10px; display: none; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f8f9fa; }
+        .total-row { font-weight: bold; background: #f1f3f5; }
+        .invoice-summary { margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 5px; }
+    </style>
 </head>
 <body>
-    <h1>Поиск и скачивание контента</h1>
-    
-    <input type="text" id="keyword" placeholder="Введите ключевое слово (например, роблокс или питон)">
-    <button onclick="search()">Найти</button>
-    
-    <div id="error-msg" class="error"></div>
-    
-    <ul id="url-list"></ul>
 
-    <div id="download-section" class="hidden">
-        <h3>Загрузка...</h3>
-        <div id="progress-container">
-            <div id="progress-bar"></div>
+<div class="container">
+    <h1>Коммунальные услуги</h1>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('meter')">Передать показания</button>
+        <button class="tab-btn" onclick="switchTab('invoice')">Квитанция и долг</button>
+    </div>
+
+    <!-- ВКЛАДКА 1: ВВОД ПОКАЗАНИЙ -->
+    <div id="tab-meter" class="tab-content active">
+        <div class="form-group">
+            <label>Выберите счетчик:</label>
+            <select id="meterType" onchange="toggleFields()">
+                <option value="elec">Электроэнергия (Зонный: День/Ночь)</option>
+                <option value="water">Вода холодная</option>
+            </select>
         </div>
-        <div id="status-text"></div>
+
+        <div id="fields-elec">
+            <div class="form-group">
+                <label>Показание День (кВт-ч):</label>
+                <input type="number" id="valDay" placeholder="Например, 40501">
+            </div>
+            <div class="form-group">
+                <label>Показание Ночь (кВт-ч):</label>
+                <input type="number" id="valNight" placeholder="Например, 9900">
+            </div>
+        </div>
+
+        <div id="fields-water" style="display: none;">
+            <div class="form-group">
+                <label>Показание Вода (м³):</label>
+                <input type="number" id="valWater" placeholder="Например, 109">
+            </div>
+        </div>
+
+        <button class="submit-btn" onclick="sendReadings()">Отправить показания</button>
+        
+        <div id="errorMsg" class="error"></div>
+        <div id="successMsg" class="success"></div>
     </div>
 
-    <div id="content-section" class="hidden">
-        <h3>Загруженный контент:</h3>
-        <button onclick="saveToLocalStorage()">Сохранить в LocalStorage</button>
-        <pre id="content-display"></pre>
-    </div>
+    <!-- ВКЛАДКА 2: КВИТАНЦИЯ -->
+    <div id="tab-invoice" class="tab-content">
+        <h2>Квитанция за расчетный период</h2>
+        <table id="invoiceTable">
+            <thead>
+                <tr>
+                    <th>Услуга</th>
+                    <th>Потребление</th>
+                    <th>Тариф</th>
+                    <th>Начислено</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Данные вставит JS -->
+            </tbody>
+        </table>
 
-    <div id="saved-section">
-        <h3>Сохраненный контент (Офлайн):</h3>
-        <ul id="saved-list"></ul>
-        <button onclick="clearLocalStorage()">Очистить сохранения</button>
-        <pre id="saved-display" class="hidden"></pre>
+        <div class="invoice-summary">
+            <p>Начислено за период: <b id="totalAccrued">0.00</b> ₽</p>
+            <p>Задолженность на начало: <b id="debt">0.00</b> ₽</p>
+            <h3>К ОПЛАТЕ: <span id="toPay" style="color: #d32f2f;">0.00</span> ₽</h3>
+        </div>
     </div>
+</div>
 
-    <script src="script.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
